@@ -6,9 +6,11 @@ from selenium.common.exceptions import NoSuchElementException
 import pickle
 import time
 import os
+import requests, json
 print("[*] Bot Initialization")
 
-
+api_key=" 4e01595d6a2a03cb33dae3e416ae0044"
+base_url = "http://api.openweathermap.org/data/2.5/weather?"
 chromeOptions = Options()
 # firefoxOptions.add_argument("--headless") # this is to be enabled after scanning the QR code
 check = False
@@ -57,11 +59,21 @@ def ParseChat(chat):
         chat.get_property("offsetParent").click()
         message = driver.execute_script("ms = document.getElementsByClassName(\"message-in\"); return ms[ms.length-1]")
         if (("!ba" in message.text) & (message.text != lastMes)):
-            lastMes = message.text
-            if ("ora" in message.text):
-                SendMsg("Ora este " + time.strftime("%H:%M:%S", time.gmtime()))
-            else:
-                SendMsg("shhhh......taci")
+                lastMes = message.text
+                if ("ora" in message.text):
+                        SendMsg("Ora este " + time.strftime("%H:%M:%S", time.gmtime()))
+                if("vreme" in message.text):
+                        city_name = message.text.split("vreme ")[1] #!ba vreme Barlad
+                        complete_url = base_url + "appid=" + api_key + "&q=" + city_name
+                        response = request.get(complete_url)
+                        x = response.json()
+                        y = x['main']
+                        temperature = y['temp']
+                        humidity = y['humidity']
+                        SendMsg("Temperatura este " + temperature + " iar umiditatea este de " + humidity)
+                else:
+                        SendMsg("shhhh......taci")
+                
 def MessagesListener():
         # So <div class="_2WP9Q"> is where the names are.
         # This "_19RFN _1ovWX _F7Vk" is the name of the chat
