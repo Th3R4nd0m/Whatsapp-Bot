@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 import pickle
 import time
+import datetime
 import os
 import requests, json
 print("[*] Bot Initialization")
@@ -71,6 +72,8 @@ def ParseChat(chat):
                         temperature = y['temp']
                         humidity = y['humidity']
                         SendMsg("Temperatura este " + temperature + " iar umiditatea este de " + humidity)
+                if("data" in message.text):
+                        SendMsg("Data este " + datetime.datetime.now())
                 else:
                         SendMsg("shhhh......taci")
                 
